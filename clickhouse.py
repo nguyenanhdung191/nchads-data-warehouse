@@ -24,6 +24,17 @@ class Clickhouse:
         self.connection = clickhouse_connect.get_client(
             host=CH_HOST, username=CH_USERNAME, password=CH_PASSWORD, database=CH_DATABASE)
 
+    def __generate_rows(self, result):
+        all_columns = result.column_names
+        all_rows = result.result_rows
+        rows = []
+        for row in all_rows:
+            newRow = {}
+            for i in range(len(all_columns)):
+                newRow[all_columns[i]] = row[i]
+            rows.append(newRow)
+        return rows
+
     def init_table(self, table_name, columns):
         columns_string = ""
         for column in columns:
@@ -57,6 +68,11 @@ class Clickhouse:
                     newEvent.append(str(value))
             data.append(newEvent)
         self.connection.insert(table_name, data, columns)
+
+    def query(self, query):
+        result = self.connection.query(query)
+        rows = self.__generate_rows(result)
+        return rows
 
     def close_connection(self):
         self.connection.close()

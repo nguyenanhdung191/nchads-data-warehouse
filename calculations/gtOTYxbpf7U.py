@@ -22,20 +22,23 @@ def query_gtOTYxbpf7U(ch):
         condition3 as (
             select distinct(tei) from {table_name}
             where (
-                date_diff('day', toDate(executiondate),
+                enrollmentdate <= '2023-01-31'
+                and date_diff('day', toDate(executiondate),
                           toDate('2023-01-31')) >= 0
                 and date_diff('day', toDate(executiondate), toDate('2023-01-31')) <= 365
-                and toInt32("oHRN2HsfkHW") >= 0
-                and toInt32("oHRN2HsfkHW") < 1000
+                and toFloat32("oHRN2HsfkHW") >= 0
+                and toFloat32("oHRN2HsfkHW") < 1000
             )
-            and "HpbDuBPxhM8" >= '0'
-            and "HpbDuBPxhM8" <= '14'
+            and toFloat32("HpbDuBPxhM8") >= 0
+            and toFloat32("HpbDuBPxhM8") <= 14
             and "BR1fUe7Nx8V" = 'Female'
         )
-        select * from {table_name}
+        select count(*) from {table_name}
         where (tei in condition1
         or tei in condition2)
-        and tei in condition3;
+        and tei in condition3
     """
-    result = ch.query(query, None)
+    print(query)
+    result = ch.query(query)
+
     return result
